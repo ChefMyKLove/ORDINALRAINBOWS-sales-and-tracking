@@ -13,19 +13,14 @@
     box-sizing: border-box;
 }
 
-/* HYBRID OPTIMIZED Glass Variables */
+/* Apple Liquid Glass CSS Variables */
 :root {
     --glass-bg-light: rgba(255, 255, 255, 0.08);
-    --glass-bg-overlay: rgba(255, 255, 255, 0.04);
     --glass-border: rgba(255, 255, 255, 0.20);
-    --glass-inner-border: rgba(255, 255, 255, 0.10);
-    --blur-primary: 24px;
-    --blur-secondary: 12px;
-    --noise-opacity: 0.03;
-    --edge-glow-size: 220px;
-    --edge-glow-opacity: 0.95;
-    --edge-thickness: 3px;
-    --saturation: 200%;
+    --blur-primary: 20px;
+    --refraction-scale: 40;
+    --edge-glow-size: 140px;
+    --edge-glow-opacity: 0.75;
 }
 
 body {
@@ -35,12 +30,6 @@ body {
     padding: 20px;
     line-height: 1.6;
     min-height: 100vh;
-    opacity: 0;
-    transition: opacity 0.6s ease;
-}
-
-body.loaded {
-    opacity: 1;
 }
 
 .container {
@@ -48,31 +37,7 @@ body.loaded {
     margin: 0 auto;
 }
 
-/* Loading spinner */
-.loading-spinner {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 60px;
-    height: 60px;
-    border: 4px solid rgba(255, 255, 255, 0.1);
-    border-top: 4px solid #fff;
-    border-radius: 50%;
-    animation: spin 1s linear infinite;
-    z-index: 10000;
-}
-
-body.loaded .loading-spinner {
-    display: none;
-}
-
-@keyframes spin {
-    0% { transform: translate(-50%, -50%) rotate(0deg); }
-    100% { transform: translate(-50%, -50%) rotate(360deg); }
-}
-
-/* Background - Static initially, desktop animation after load */
+/* Rainbow background - STATIC initially, animates after load */
 body::before {
     content: '';
     position: fixed;
@@ -86,15 +51,13 @@ body::before {
     background-repeat: no-repeat;
     z-index: -1;
     filter: brightness(0.7) saturate(1.2);
-    will-change: background-image;
-    transform: translate3d(0, 0, 0);
+    opacity: 0;
+    transition: opacity 0.5s ease;
 }
 
-/* Desktop-only animation */
-@media (min-width: 769px) {
-    body.loaded::before {
-        animation: backgroundCycle 104s infinite ease-in-out;
-    }
+body.loaded::before {
+    opacity: 1;
+    animation: backgroundCycle 104s infinite ease-in-out;
 }
 
 @keyframes backgroundCycle {
@@ -118,22 +81,7 @@ body::before {
     100% { background-image: url('images/Do-ItBow%231.JPG'); }
 }
 
-/* Optimized noise texture */
-body::after {
-    content: '';
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
-    opacity: var(--noise-opacity);
-    pointer-events: none;
-    z-index: 1;
-    mix-blend-mode: overlay;
-}
-
-/* Header - Always active glass effect */
+/* Header - Always visible, gets full treatment */
 header {
     text-align: center;
     padding: 40px 20px;
@@ -142,71 +90,36 @@ header {
     overflow: hidden;
     position: relative;
     border: 1px solid var(--glass-border);
-    box-shadow: 
-        0 8px 32px rgba(0, 0, 0, 0.3),
-        0 1px 2px rgba(0, 0, 0, 0.1),
-        inset 0 1px 0 var(--glass-inner-border);
-    isolation: isolate;
-    background: transparent;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    background: var(--glass-bg-light);
 }
 
-/* Two-layer blur for header */
-header::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    z-index: 1;
-    /* CRITICAL: No url(#liquid-distortion) here */
-    backdrop-filter: blur(var(--blur-primary)) saturate(var(--saturation));
-    -webkit-backdrop-filter: blur(var(--blur-primary)) saturate(var(--saturation));
-    border-radius: inherit;
-    background: var(--glass-bg-light);
+/* LIQUID GLASS for header - always active */
+header.glass-active {
+    backdrop-filter: blur(var(--blur-primary)) saturate(180%) url(#liquid-distortion);
+    -webkit-backdrop-filter: blur(var(--blur-primary)) saturate(180%) url(#liquid-distortion);
 }
 
 header::after {
     content: '';
     position: absolute;
-    inset: 4px;
-    z-index: 2;
-    backdrop-filter: blur(var(--blur-secondary));
-    -webkit-backdrop-filter: blur(var(--blur-secondary));
-    border-radius: calc(32px - 4px);
-    background: var(--glass-bg-overlay);
-    pointer-events: none;
-}
-
-/* Header edge glow - always visible */
-.header-edges {
-    position: absolute;
     inset: -1px;
     border-radius: inherit;
-    padding: var(--edge-thickness);
+    padding: 2px;
     background: 
         radial-gradient(circle var(--edge-glow-size) at 0% 0%, 
             rgba(255, 255, 255, var(--edge-glow-opacity)) 0%, 
-            rgba(255, 255, 255, calc(var(--edge-glow-opacity) * 0.67)) 20%,
-            rgba(255, 255, 255, calc(var(--edge-glow-opacity) * 0.33)) 40%,
             transparent 70%),
         radial-gradient(circle var(--edge-glow-size) at 100% 100%, 
-            rgba(255, 255, 255, calc(var(--edge-glow-opacity) * 0.78)) 0%, 
-            rgba(255, 255, 255, calc(var(--edge-glow-opacity) * 0.44)) 20%,
-            rgba(255, 255, 255, calc(var(--edge-glow-opacity) * 0.22)) 40%,
-            transparent 70%),
-        radial-gradient(circle calc(var(--edge-glow-size) * 0.67) at 100% 0%, 
-            rgba(255, 255, 255, calc(var(--edge-glow-opacity) * 0.56)) 0%,
-            rgba(255, 255, 255, calc(var(--edge-glow-opacity) * 0.22)) 30%,
-            transparent 60%),
-        radial-gradient(circle calc(var(--edge-glow-size) * 0.67) at 0% 100%, 
-            rgba(255, 255, 255, calc(var(--edge-glow-opacity) * 0.56)) 0%,
-            rgba(255, 255, 255, calc(var(--edge-glow-opacity) * 0.22)) 30%,
-            transparent 60%);
+            rgba(255, 255, 255, calc(var(--edge-glow-opacity) * 0.7)) 0%, 
+            transparent 70%);
     -webkit-mask: 
         linear-gradient(#fff 0 0) content-box, 
         linear-gradient(#fff 0 0);
     -webkit-mask-composite: xor;
     mask-composite: exclude;
     pointer-events: none;
-    z-index: 10;
+    z-index: 5;
 }
 
 header > * {
@@ -227,8 +140,7 @@ h1 {
     -webkit-text-fill-color: transparent;
     color: transparent;
     animation: backgroundCycle 12s infinite ease-in-out;
-    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3)) 
-            drop-shadow(0 0 1px rgba(255, 255, 255, 0.5));
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
 }
 
 .subtitle {
@@ -255,88 +167,40 @@ h1 {
     z-index: 2;
 }
 
-/* NFT Cards - HYBRID APPROACH */
+/* NFT Card - SIMPLIFIED base state */
 .nft-card {
     position: relative;
     border-radius: 32px;
     overflow: hidden;
-    transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), 
-                box-shadow 0.4s ease;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
     border: 1px solid var(--glass-border);
-    box-shadow: 
-        0 8px 32px rgba(0, 0, 0, 0.3),
-        0 1px 2px rgba(0, 0, 0, 0.1),
-        inset 0 1px 0 var(--glass-inner-border);
-    isolation: isolate;
-    background: transparent;
-    will-change: transform;
-    transform: translateZ(0);
-}
-
-/* Primary glass layer - LAZY ACTIVATED */
-.nft-card::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    z-index: 1;
-    /* CRITICAL: No url(#liquid-distortion) here */
-    backdrop-filter: blur(var(--blur-primary)) saturate(var(--saturation));
-    -webkit-backdrop-filter: blur(var(--blur-primary)) saturate(var(--saturation));
-    border-radius: inherit;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
     background: var(--glass-bg-light);
-    pointer-events: none;
-    opacity: 0;
-    transition: opacity 0.5s ease;
+    /* Simple blur fallback - cheap */
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
 }
 
-.nft-card.glass-active::before {
-    opacity: 1;
+/* LIQUID GLASS activation - only when visible via Intersection Observer */
+.nft-card.glass-active {
+    backdrop-filter: blur(var(--blur-primary)) saturate(180%) url(#liquid-distortion);
+    -webkit-backdrop-filter: blur(var(--blur-primary)) saturate(180%) url(#liquid-distortion);
 }
 
-/* Secondary glass layer - LAZY ACTIVATED */
+/* Corner highlights */
 .nft-card::after {
     content: '';
     position: absolute;
-    inset: 4px;
-    z-index: 2;
-    backdrop-filter: blur(var(--blur-secondary));
-    -webkit-backdrop-filter: blur(var(--blur-secondary));
-    border-radius: calc(32px - 4px);
-    background: var(--glass-bg-overlay);
-    pointer-events: none;
-    opacity: 0;
-    transition: opacity 0.5s ease 0.1s; /* Slight delay for layered effect */
-}
-
-.nft-card.glass-active::after {
-    opacity: 1;
-}
-
-/* Edge glow - separate element, LAZY ACTIVATED */
-.card-edges {
-    position: absolute;
     inset: -1px;
     border-radius: inherit;
-    padding: var(--edge-thickness);
+    padding: 2px;
     background: 
         radial-gradient(circle var(--edge-glow-size) at 0% 0%, 
             rgba(255, 255, 255, var(--edge-glow-opacity)) 0%, 
-            rgba(255, 255, 255, calc(var(--edge-glow-opacity) * 0.67)) 20%,
-            rgba(255, 255, 255, calc(var(--edge-glow-opacity) * 0.33)) 40%,
             transparent 70%),
         radial-gradient(circle var(--edge-glow-size) at 100% 100%, 
-            rgba(255, 255, 255, calc(var(--edge-glow-opacity) * 0.78)) 0%, 
-            rgba(255, 255, 255, calc(var(--edge-glow-opacity) * 0.44)) 20%,
-            rgba(255, 255, 255, calc(var(--edge-glow-opacity) * 0.22)) 40%,
-            transparent 70%),
-        radial-gradient(circle calc(var(--edge-glow-size) * 0.67) at 100% 0%, 
-            rgba(255, 255, 255, calc(var(--edge-glow-opacity) * 0.56)) 0%,
-            rgba(255, 255, 255, calc(var(--edge-glow-opacity) * 0.22)) 30%,
-            transparent 60%),
-        radial-gradient(circle calc(var(--edge-glow-size) * 0.67) at 0% 100%, 
-            rgba(255, 255, 255, calc(var(--edge-glow-opacity) * 0.56)) 0%,
-            rgba(255, 255, 255, calc(var(--edge-glow-opacity) * 0.22)) 30%,
-            transparent 60%);
+            rgba(255, 255, 255, calc(var(--edge-glow-opacity) * 0.7)) 0%, 
+            transparent 70%);
     -webkit-mask: 
         linear-gradient(#fff 0 0) content-box, 
         linear-gradient(#fff 0 0);
@@ -345,19 +209,16 @@ h1 {
     pointer-events: none;
     z-index: 10;
     opacity: 0;
-    transition: opacity 0.5s ease 0.2s; /* Delayed for cascading effect */
+    transition: opacity 0.4s ease;
 }
 
-.nft-card.glass-active .card-edges {
+.nft-card.glass-active::after {
     opacity: 1;
 }
 
 .nft-card:hover {
-    transform: translateY(-12px) scale(1.02);
-    box-shadow: 
-        0 24px 48px rgba(0, 0, 0, 0.4),
-        0 2px 4px rgba(0, 0, 0, 0.2),
-        inset 0 1px 0 rgba(255, 255, 255, 0.3);
+    transform: translateY(-10px) scale(1.02);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
 }
 
 .nft-card > * {
@@ -365,39 +226,9 @@ h1 {
     z-index: 3;
 }
 
-.nft-info::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    pointer-events: none;
-    background: 
-        linear-gradient(to bottom, 
-            rgba(10, 10, 18, 0.85) 0%, 
-            transparent 12%, 
-            transparent 88%, 
-            rgba(10, 10, 18, 0.85) 100%
-        ),
-        linear-gradient(to right, 
-            rgba(10, 10, 18, 0.5) 0%, 
-            transparent 8%, 
-            transparent 92%, 
-            rgba(10, 10, 18, 0.5) 100%
-        );
-    border-radius: 0 0 32px 32px;
-}
-
 .nft-header {
     padding: 25px;
-    background: linear-gradient(
-        180deg,
-        rgba(255, 255, 255, 0.08) 0%,
-        rgba(255, 255, 255, 0.02) 100%
-    );
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
+    background: rgba(255, 255, 255, 0.03);
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
@@ -414,8 +245,7 @@ h1 {
     -webkit-text-fill-color: transparent;
     color: transparent;
     animation: backgroundCycle 22s infinite ease-in-out;
-    filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.4))
-            drop-shadow(0 0 1px rgba(255, 255, 255, 0.3));
+    filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.4));
 }
 
 .nft-subtitle {
@@ -434,31 +264,16 @@ h1 {
     filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.3));
 }
 
-/* Lazy loaded images */
 .nft-image {
     width: 100%;
     height: 400px;
     object-fit: cover;
     display: block;
-    background: linear-gradient(135deg, #2a2a3e 0%, #3a3a4e 100%);
-    transition: opacity 0.3s ease;
-}
-
-.nft-image.lazy {
-    opacity: 0.5;
-}
-
-.nft-image.loaded {
-    opacity: 1;
 }
 
 .nft-info {
     padding: 25px;
-    background: linear-gradient(
-        180deg,
-        rgba(0, 0, 0, 0.4) 0%,
-        rgba(0, 0, 0, 0.3) 100%
-    );
+    background: rgba(0, 0, 0, 0.3);
     position: relative;
 }
 
@@ -479,7 +294,6 @@ h1 {
 .info-label {
     font-weight: 600;
     color: #b8b8b8;
-    letter-spacing: -0.01em;
 }
 
 .info-value {
@@ -493,7 +307,6 @@ h1 {
     border-radius: 20px;
     font-weight: 600;
     font-size: 0.9em;
-    letter-spacing: 0.02em;
 }
 
 .rarity.legendary {
@@ -538,38 +351,16 @@ h1 {
     text-decoration: none;
     border-radius: 12px;
     font-weight: 600;
-    letter-spacing: 0.01em;
-    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1),
-                box-shadow 0.3s ease;
+    transition: transform 0.2s ease;
     animation: backgroundCycle 45s infinite ease-in-out;
     text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
     border: 1px solid rgba(255, 255, 255, 0.2);
     cursor: pointer;
-    position: relative;
-    overflow: hidden;
-}
-
-.sale-link::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(
-        135deg,
-        transparent 0%,
-        rgba(255, 255, 255, 0.1) 50%,
-        transparent 100%
-    );
-    transform: translateX(-100%);
-    transition: transform 0.6s ease;
-}
-
-.sale-link:hover::before {
-    transform: translateX(100%);
 }
 
 .sale-link:hover {
     transform: scale(1.05);
-    box-shadow: 0 0 30px rgba(255, 255, 255, 0.6);
+    box-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
 }
 
 .sale-link.unavailable {
@@ -588,8 +379,8 @@ h1 {
     width: 100%;
     height: 100%;
     background-color: rgba(0, 0, 0, 0.85);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
 }
 
 .printify-modal-content {
@@ -601,11 +392,7 @@ h1 {
     background: rgba(10, 10, 18, 0.95);
     border: 1px solid rgba(255, 255, 255, 0.2);
     border-radius: 24px;
-    box-shadow: 
-        0 20px 60px rgba(0, 0, 0, 0.5),
-        inset 0 1px 0 rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(40px);
-    -webkit-backdrop-filter: blur(40px);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
     display: flex;
     flex-direction: column;
 }
@@ -616,32 +403,26 @@ h1 {
     align-items: center;
     padding: 20px 30px;
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    background: linear-gradient(
-        180deg,
-        rgba(255, 255, 255, 0.05) 0%,
-        transparent 100%
-    );
 }
 
 .printify-modal-header h2 {
     margin: 0;
     color: #fff;
     font-weight: 700;
-    letter-spacing: -0.02em;
 }
 
 .printify-modal-close {
     font-size: 40px;
     color: #fff;
     cursor: pointer;
-    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    transition: all 0.3s ease;
     line-height: 1;
     opacity: 0.7;
 }
 
 .printify-modal-close:hover {
     opacity: 1;
-    transform: scale(1.1) rotate(90deg);
+    transform: scale(1.1);
 }
 
 .printify-iframe {
@@ -651,57 +432,61 @@ h1 {
     border-radius: 0 0 24px 24px;
 }
 
-/* AGGRESSIVE MOBILE OPTIMIZATIONS */
+/* Mobile optimizations */
 @media (max-width: 768px) {
-    :root {
-        --blur-primary: 12px;
-        --blur-secondary: 6px;
-        --edge-glow-size: 140px;
-        --edge-glow-opacity: 0.7;
-    }
-    
     .gallery {
         grid-template-columns: 1fr;
-        gap: 30px;
     }
 
     h1 {
         font-size: 2em;
     }
-    
-    .subtitle {
-        font-size: 1.2em;
-    }
 
     .nft-image {
         height: 300px;
     }
-    
-    /* Gentler hover on mobile */
-    .nft-card:hover {
-        transform: translateY(-6px) scale(1.01);
+
+    /* Reduce effects on mobile */
+    :root {
+        --blur-primary: 16px;
+        --refraction-scale: 30;
+        --edge-glow-size: 100px;
     }
-    
-    /* Simplify edge glow to 2 gradients */
-    .card-edges,
-    .header-edges {
-        background: 
-            radial-gradient(circle var(--edge-glow-size) at 0% 0%, 
-                rgba(255, 255, 255, var(--edge-glow-opacity)) 0%, 
-                transparent 70%),
-            radial-gradient(circle var(--edge-glow-size) at 100% 100%, 
-                rgba(255, 255, 255, calc(var(--edge-glow-opacity) * 0.7)) 0%, 
-                transparent 70%);
-    }
+}
+
+/* Loading skeleton for unactivated cards */
+.nft-card:not(.glass-active) {
+    background: rgba(255, 255, 255, 0.05);
 }
     </style>
 </head>
 <body>
-    <div class="loading-spinner"></div>
-    
+    <!-- OPTIMIZED SVG Filter - simpler, non-animating -->
+    <svg width="0" height="0" style="position: absolute;" aria-hidden="true">
+        <defs>
+            <filter id="liquid-distortion" x="-50%" y="-50%" width="200%" height="200%">
+                <!-- Single noise layer - NO animation -->
+                <feTurbulence 
+                    type="fractalNoise" 
+                    baseFrequency="0.01" 
+                    numOctaves="2" 
+                    seed="42"
+                    result="noise"
+                />
+                <feGaussianBlur in="noise" stdDeviation="1.5" result="smoothNoise" />
+                <feDisplacementMap 
+                    in="SourceGraphic" 
+                    in2="smoothNoise" 
+                    scale="40" 
+                    xChannelSelector="R" 
+                    yChannelSelector="G"
+                />
+            </filter>
+        </defs>
+    </svg>
+
     <div class="container">
-        <header>
-            <div class="header-edges"></div>
+        <header id="main-header">
             <h1>ORDINAL 🌈 RAINBOWS Vol. 1</h1>
             <p class="subtitle">A PATENTED HARVESTING PROCESS YIELDS SOME AMAZING RESULTS!! ADORN YOUR ENVIRONMENT WITH RAINBOW MAGIC</p>
         </header>
@@ -710,7 +495,7 @@ h1 {
     </div>
 
     <script>
-        // NFT data with full Printify URLs
+        // NFT data
         const nfts = [
             { id: "AlchemyBow", title: "AlchemyBow", subtitle: "Magical Transformation of Light Into Gold", rarity: "Exotic", printifyUrl: "https://ordinalrainbows.printify.me/product/26270333/alchemybow-magical-transformation-of-light-into-gold" },
             { id: "AuroraBow#1", title: "AuroraBow #1", subtitle: "First Whisper of the Polar Veil", rarity: "Common", printifyUrl: "https://ordinalrainbows.printify.me/product/26270391/aurorabow-1-first-whisper-of-the-polar-veil" },
@@ -750,7 +535,7 @@ h1 {
             { id: "GhostyBow#4", title: "GhostyBow #4", subtitle: "Haunting at the Edge of Night", rarity: "Uncommon", printifyUrl: "https://ordinalrainbows.printify.me/product/26312329/ghostybow-4-haunting-at-the-edge-of-night" },
             { id: "HazeBow#1", title: "HazeBow #1", subtitle: "Lost in Soft Rainbow Phases", rarity: "Common", printifyUrl: "https://ordinalrainbows.printify.me/product/26312342/hazebow-1-lost-in-soft-rainbow-phases" },
             { id: "HazeBow#2", title: "HazeBow #2", subtitle: "Between Reality and Dreams", rarity: "Common", printifyUrl: "https://ordinalrainbows.printify.me/product/26313072/hazebow-2-between-reality-and-dreams" },
-            { id: "HazeBow#3", title: "HazeBow #3", subtitle: "When First You Open Your Eyes", rarity: "Common", printifyUrl: "https://ordinalrainbows.printify.me/product/26313088/hazebow-3-when-first-you-open-your-eyes" },
+            { id: "HazeBow#3", title: "HazeBow#3", subtitle: "When First You Open Your Eyes", rarity: "Common", printifyUrl: "https://ordinalrainbows.printify.me/product/26313088/hazebow-3-when-first-you-open-your-eyes" },
             { id: "HeartBow", title: "HeartBow", subtitle: "Love In the Palm of Your Hand", rarity: "Legendary", printifyUrl: "https://ordinalrainbows.printify.me/product/26312781/heartbow-love-in-the-palm-of-your-hand" },
             { id: "HummingBow#1", title: "HummingBow #1", subtitle: "Hovering Prism Heartbeat", rarity: "Common", printifyUrl: "https://ordinalrainbows.printify.me/product/26312802/hummingbow-1-hovering-prism-heartbeat" },
             { id: "HummingBow#2", title: "HummingBow #2", subtitle: "How Rapid is Rapid?", rarity: "Common", printifyUrl: "https://ordinalrainbows.printify.me/product/26312814/hummingbow-2-how-rapid-is-rapid" },
@@ -780,46 +565,19 @@ h1 {
 
         const gallery = document.getElementById('gallery');
 
-        // HYBRID OPTIMIZATION: Lazy glass effect activation
-        const glassObserver = new IntersectionObserver((entries) => {
+        // ⚡ PERFORMANCE OPTIMIZATION: Intersection Observer for lazy liquid glass activation
+        const liquidGlassObserver = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
-                    // Activate the expensive glass effect only when visible
+                    // Activate liquid glass effect when card enters viewport
                     entry.target.classList.add('glass-active');
-                    // Unobserve to save resources
-                    glassObserver.unobserve(entry.target);
+                    // Optional: Unobserve after activation to save resources
+                    // liquidGlassObserver.unobserve(entry.target);
                 }
             });
         }, {
-            rootMargin: '100px', // Start activating 100px before entering viewport
-            threshold: 0.1
-        });
-
-        // Lazy image loading observer
-        const imageObserver = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    const img = entry.target;
-                    const actualSrc = img.dataset.src;
-                    
-                    // Load the actual image
-                    const tempImg = new Image();
-                    tempImg.onload = () => {
-                        img.src = actualSrc;
-                        img.classList.remove('lazy');
-                        img.classList.add('loaded');
-                    };
-                    tempImg.onerror = () => {
-                        // Fallback placeholder on error
-                        img.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Crect fill='%23333' width='400' height='400'/%3E%3Ctext fill='%23fff' font-size='20' x='50%25' y='50%25' text-anchor='middle' dominant-baseline='middle'%3EImage Loading...%3C/text%3E%3C/svg%3E";
-                    };
-                    tempImg.src = actualSrc;
-                    
-                    imageObserver.unobserve(img);
-                }
-            });
-        }, {
-            rootMargin: '50px'
+            rootMargin: '50px', // Start activating 50px before card enters viewport
+            threshold: 0.1 // Trigger when 10% of card is visible
         });
 
         // Generate NFT cards
@@ -830,22 +588,12 @@ h1 {
             const rarityClass = nft.rarity.toLowerCase();
             const hasUrl = nft.printifyUrl && nft.printifyUrl !== null;
 
-            // Placeholder SVG
-            const placeholderSvg = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Crect fill='%232a2a3e' width='400' height='400'/%3E%3Ctext fill='%23fff' font-size='16' x='50%25' y='50%25' text-anchor='middle' dominant-baseline='middle'%3ELoading...%3C/text%3E%3C/svg%3E";
-
             card.innerHTML = `
-                <div class="card-edges"></div>
                 <div class="nft-header">
                     <div class="nft-title">${nft.title}</div>
                     <div class="nft-subtitle">${nft.subtitle}</div>
                 </div>
-                <img 
-                    src="${placeholderSvg}" 
-                    data-src="images/${encodeURIComponent(nft.id)}.JPG" 
-                    alt="${nft.title}" 
-                    class="nft-image lazy"
-                    loading="lazy"
-                >
+                <img src="images/${encodeURIComponent(nft.id)}.JPG" alt="${nft.title}" class="nft-image" loading="lazy" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22400%22 height=%22400%22%3E%3Crect fill=%22%23333%22 width=%22400%22 height=%22400%22/%3E%3Ctext fill=%22%23fff%22 font-size=%2220%22 x=%2250%25%22 y=%2250%25%22 text-anchor=%22middle%22 dominant-baseline=%22middle%22%3EImage Loading...%3C/text%3E%3C/svg%3E">
                 <div class="nft-info">
                     <div class="info-row">
                         <span class="info-label">Rarity:</span>
@@ -868,12 +616,18 @@ h1 {
 
             gallery.appendChild(card);
 
-            // Observe card for lazy glass activation
-            glassObserver.observe(card);
-            
-            // Observe image for lazy loading
-            const img = card.querySelector('.nft-image');
-            imageObserver.observe(img);
+            // Observe card for lazy liquid glass activation
+            liquidGlassObserver.observe(card);
+        });
+
+        // Activate header liquid glass immediately
+        document.getElementById('main-header').classList.add('glass-active');
+
+        // Start background animation after page load
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                document.body.classList.add('loaded');
+            }, 100);
         });
 
         // Open Printify store in modal
@@ -921,13 +675,6 @@ h1 {
             modal.remove();
             document.body.style.overflow = '';
         }
-
-        // Page load handling
-        window.addEventListener('DOMContentLoaded', () => {
-            setTimeout(() => {
-                document.body.classList.add('loaded');
-            }, 100);
-        });
     </script>
 </body>
 </html>
