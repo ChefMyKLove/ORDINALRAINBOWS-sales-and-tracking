@@ -81,7 +81,299 @@ body.loaded::before {
     100% { background-image: url('images/Do-ItBow%231.JPG'); }
 }
 
-/* Header - Always visible, gets full treatment */
+/* WALLET CONNECTION */
+.wallet-section {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1000;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.connect-btn, .wallet-status {
+    padding: 12px 24px;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.2s;
+    box-shadow: 0 4px 20px rgba(102, 126, 234, 0.4);
+}
+
+.connect-btn:hover {
+    transform: scale(1.05);
+}
+
+.wallet-status {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    background: linear-gradient(135deg, #43e97b, #38f9d7);
+    color: #000;
+}
+
+.wallet-address {
+    font-family: monospace;
+    font-size: 0.9em;
+    font-weight: 600;
+}
+
+.disconnect-btn {
+    padding: 6px 12px;
+    background: rgba(0,0,0,0.2);
+    border: 1px solid rgba(255,255,255,0.3);
+    border-radius: 8px;
+    color: #000;
+    cursor: pointer;
+    font-size: 0.85em;
+    font-weight: 600;
+    transition: all 0.2s;
+}
+
+.disconnect-btn:hover {
+    background: rgba(0,0,0,0.3);
+    transform: scale(1.05);
+}
+
+/* CAROUSEL */
+.carousel-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    opacity: 1;
+    transition: opacity 0.5s ease;
+}
+
+/* Animated background for carousel */
+.carousel-overlay::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url('images/AlchemyBow.JPG');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    z-index: -1;
+    filter: brightness(0.5) saturate(1.2) blur(8px);
+    animation: backgroundCycle 104s infinite ease-in-out;
+}
+
+.carousel-overlay.hidden {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.carousel-container {
+    position: relative;
+    width: 90%;
+    max-width: 800px;
+    max-height: 70vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 50px;
+}
+
+.carousel-image {
+    max-width: 100%;
+    max-height: 100%;
+    border-radius: 24px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
+    cursor: pointer;
+    transition: transform 0.3s ease;
+}
+
+.carousel-image:hover {
+    transform: scale(1.02);
+}
+
+.carousel-nav {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: white;
+    font-size: 2em;
+    padding: 20px 30px;
+    cursor: pointer;
+    border-radius: 12px;
+    transition: all 0.3s ease;
+    z-index: 10;
+}
+
+.carousel-nav:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: translateY(-50%) scale(1.1);
+}
+
+.carousel-nav.prev { left: -80px; }
+.carousel-nav.next { right: -80px; }
+
+.carousel-info {
+    margin-top: 30px;
+    text-align: center;
+    padding: 0 50px;
+}
+
+.carousel-title {
+    font-size: 2.5em;
+    font-weight: 700;
+    background: linear-gradient(135deg, #ff006e, #ff4d00, #ffb700, #00f5d4, #00bbf9, #5e60ce, #7209b7);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 10px;
+    text-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+}
+
+.carousel-subtitle {
+    font-size: 1.3em;
+    color: #fff;
+    margin-bottom: 25px;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
+}
+
+.carousel-skip {
+    padding: 12px 30px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: white;
+    border-radius: 12px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.carousel-skip:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: scale(1.05);
+}
+
+/* INDIVIDUAL CARD VIEW */
+.individual-card-view {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 9998;
+    display: none;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+}
+
+.individual-card-view.active {
+    display: flex;
+    opacity: 1;
+}
+
+/* Animated background for individual card */
+.individual-card-view::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url('images/AlchemyBow.JPG');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    z-index: -1;
+    filter: brightness(0.5) saturate(1.2) blur(8px);
+    animation: backgroundCycle 104s infinite ease-in-out;
+}
+
+.individual-card-container {
+    max-width: 600px;
+    width: 100%;
+    position: relative;
+    z-index: 1;
+}
+
+.back-to-gallery {
+    display: block;
+    margin-top: 20px;
+    padding: 14px 30px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: white;
+    text-align: center;
+    text-decoration: none;
+    border-radius: 12px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.back-to-gallery:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: scale(1.05);
+    color: white;
+}
+
+/* CONTROLS */
+.controls-section {
+    margin-bottom: 30px;
+    padding: 25px;
+    background: var(--glass-bg-light);
+    border: 1px solid var(--glass-border);
+    border-radius: 24px;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+}
+
+.controls-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr;
+    gap: 15px;
+}
+
+.search-input, .filter-select {
+    padding: 14px 20px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 12px;
+    color: white;
+    font-size: 1em;
+    transition: all 0.3s ease;
+}
+
+.search-input:focus, .filter-select:focus {
+    outline: none;
+    background: rgba(255, 255, 255, 0.15);
+    border-color: rgba(255, 255, 255, 0.4);
+}
+
+.search-input::placeholder {
+    color: rgba(255, 255, 255, 0.5);
+}
+
+.filter-select option {
+    background: #1a1a2e;
+    color: white;
+}
+
+/* Header - Always visible */
 header {
     text-align: center;
     padding: 30px 30px;
@@ -94,10 +386,10 @@ header {
     background: var(--glass-bg-light);
 }
 
-/* LIQUID GLASS for header - always active */
+/* LIQUID GLASS for header */
 header.glass-active {
-    backdrop-filter: blur(var(--blur-primary)) saturate(180%) url(#liquid-distortion);
-    -webkit-backdrop-filter: blur(var(--blur-primary)) saturate(180%) url(#liquid-distortion);
+    backdrop-filter: blur(var(--blur-primary)) saturate(180%);
+    -webkit-backdrop-filter: blur(var(--blur-primary)) saturate(180%);
 }
 
 header::after {
@@ -128,10 +420,10 @@ header > * {
 }
 
 h1 {
-     font-size: clamp(1.5rem, 5vw, 4.5em);
+    font-size: clamp(1.5rem, 5vw, 4.5em);
     font-weight: 700;
     letter-spacing: -0.02em;
-     padding: 15px 25px 25px 5px;
+    padding: 15px 25px 25px 5px;
     margin-bottom: 25px;
     background-size: cover;
     background-position: center;
@@ -141,8 +433,8 @@ h1 {
     -webkit-text-fill-color: transparent;
     color: transparent;
     animation: backgroundCycle 42s infinite ease-in-out;
-     filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.3));
-     -webkit-text-stroke: 0.05px rgba(255, 255, 255, 0.7);
+    filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.3));
+    -webkit-text-stroke: 0.05px rgba(255, 255, 255, 0.7);
     text-shadow: 
         0 0 5px rgba(255, 255, 255, 0.3),
         0 0 20px rgba(255, 255, 255, 0.2);
@@ -160,8 +452,8 @@ h1 {
     -webkit-text-fill-color: transparent;
     color: transparent;
     animation: backgroundCycle 42s infinite ease-in-out;
-     filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.3));
-     -webkit-text-stroke: 0.5px rgba(255, 255, 255, 0.4);
+    filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.3));
+    -webkit-text-stroke: 0.5px rgba(255, 255, 255, 0.4);
     text-shadow: 
         0 0 10px rgba(255, 255, 255, 0.4),
         0 0 20px rgba(255, 255, 255, 0.3);
@@ -176,7 +468,7 @@ h1 {
     z-index: 2;
 }
 
-/* NFT Card - SIMPLIFIED base state */
+/* NFT Card */
 .nft-card {
     position: relative;
     border-radius: 32px;
@@ -185,18 +477,15 @@ h1 {
     border: 1px solid var(--glass-border);
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
     background: var(--glass-bg-light);
-    /* Simple blur fallback - cheap */
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
 }
 
-/* LIQUID GLASS activation - only when visible via Intersection Observer */
 .nft-card.glass-active {
-    backdrop-filter: blur(var(--blur-primary)) saturate(180%) url(#liquid-distortion);
-    -webkit-backdrop-filter: blur(var(--blur-primary)) saturate(180%) url(#liquid-distortion);
+    backdrop-filter: blur(var(--blur-primary)) saturate(180%);
+    -webkit-backdrop-filter: blur(var(--blur-primary)) saturate(180%);
 }
 
-/* Corner highlights */
 .nft-card::after {
     content: '';
     position: absolute;
@@ -224,7 +513,6 @@ h1 {
 .nft-card.glass-active::after {
     opacity: 1;
 }
-
 
 .nft-card > * {
     position: relative;
@@ -258,24 +546,11 @@ h1 {
     font-weight: 600;
     font-style: italic;
     letter-spacing: -0.01em;
-    
-    /* Static rainbow gradient */
-   background: linear-gradient(
-    135deg,  /* Diagonal angle */
-    #ff006e,
-    #ff4d00,
-    #ffb700,
-    #00f5d4,
-    #00bbf9,
-    #5e60ce,
-    #7209b7
-);
+    background: linear-gradient(135deg, #ff006e, #ff4d00, #ffb700, #00f5d4, #00bbf9, #5e60ce, #7209b7);
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
     color: transparent;
-    
-    /* Keep the shiny effects */
     filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.3));
     -webkit-text-stroke: 0.5px rgba(255, 255, 255, 0.4);
     text-shadow: 
@@ -283,12 +558,17 @@ h1 {
         0 0 20px rgba(255, 255, 255, 0.2);
 }
 
-
 .nft-image {
     width: 100%;
     height: 400px;
     object-fit: cover;
     display: block;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+}
+
+.nft-image:hover {
+    transform: scale(1.02);
 }
 
 .nft-info {
@@ -387,6 +667,7 @@ h1 {
     background: rgba(100, 100, 100, 0.3);
     cursor: not-allowed;
     opacity: 0.5;
+    animation: none;
 }
 
 /* Printify Modal */
@@ -458,21 +739,38 @@ h1 {
         grid-template-columns: 1fr;
     }
 
-   
-    }
-     header {
-        padding: 20px 10px;  /* Reduce side padding on mobile */
+    header {
+        padding: 20px 10px;
     }
 
     .nft-image {
         height: 300px;
     }
 
-    /* Reduce effects on mobile */
+    .controls-grid {
+        grid-template-columns: 1fr;
+    }
+
     :root {
         --blur-primary: 16px;
         --refraction-scale: 30;
         --edge-glow-size: 100px;
+    }
+
+    .carousel-nav {
+        padding: 15px 20px;
+        font-size: 1.5em;
+    }
+
+    .carousel-nav.prev { left: 10px; }
+    .carousel-nav.next { right: 10px; }
+
+    .carousel-container {
+        padding: 20px;
+    }
+
+    .carousel-info {
+        padding: 0 20px;
     }
 }
 
@@ -483,11 +781,10 @@ h1 {
     </style>
 </head>
 <body>
-    <!-- OPTIMIZED SVG Filter - simpler, non-animating -->
+    <!-- OPTIMIZED SVG Filter -->
     <svg width="0" height="0" style="position: absolute;" aria-hidden="true">
         <defs>
             <filter id="liquid-distortion" x="-50%" y="-50%" width="200%" height="200%">
-                <!-- Single noise layer - NO animation -->
                 <feTurbulence 
                     type="fractalNoise" 
                     baseFrequency="0.01" 
@@ -507,18 +804,75 @@ h1 {
         </defs>
     </svg>
 
-    <div class="container">
+    <!-- Wallet Connection -->
+    <div class="wallet-section">
+        <button id="connectWallet" class="connect-btn">Connect BSV Wallet</button>
+        <div id="walletStatus" class="wallet-status" style="display:none;">
+            <span class="wallet-address" id="walletAddress"></span>
+            <button class="disconnect-btn" id="disconnectWallet">Disconnect</button>
+        </div>
+    </div>
+
+    <!-- Image Carousel Overlay -->
+    <div id="carouselOverlay" class="carousel-overlay">
+        <div class="carousel-container">
+            <button class="carousel-nav prev" id="carouselPrev">‹</button>
+            <img id="carouselImage" class="carousel-image" src="" alt="NFT Preview">
+            <button class="carousel-nav next" id="carouselNext">›</button>
+        </div>
+        <div class="carousel-info">
+            <div class="carousel-title" id="carouselTitle"></div>
+            <div class="carousel-subtitle" id="carouselSubtitle"></div>
+            <button class="carousel-skip" id="carouselSkip">Enter Gallery</button>
+        </div>
+    </div>
+
+    <!-- Individual Card View -->
+    <div id="individualCardView" class="individual-card-view">
+        <div class="individual-card-container">
+            <div id="individualCard" class="nft-card glass-active"></div>
+            <button class="back-to-gallery" id="backToGallery">← Back to Gallery</button>
+        </div>
+    </div>
+
+    <div class="container" id="mainContainer">
         <header id="main-header">
             <h1>ORDINAL•RAINBOWS Vol. 1</h1>
             <p class="subtitle">A PROPRIETARY HARVESTING PROCESS YIELDS SOME ASTOUNDING RESULTS!!</p>
             <p class="subtitle">ADORN YOUR ENVIRONMENT WITH BEAUTIFUL RAINBOW MAGIC</p>
         </header>
 
+        <!-- Search & Filter Controls -->
+        <div class="controls-section">
+            <div class="controls-grid">
+                <input 
+                    type="text" 
+                    id="searchInput" 
+                    class="search-input" 
+                    placeholder="Search by title, subtitle, or rarity..."
+                >
+                <select id="sortSelect" class="filter-select">
+                    <option value="alpha">Sort: Alphabetical</option>
+                    <option value="rarity-high">Sort: Rarity (High to Low)</option>
+                    <option value="rarity-low">Sort: Rarity (Low to High)</option>
+                </select>
+                <select id="rarityFilter" class="filter-select">
+                    <option value="all">All Rarities</option>
+                    <option value="Legendary">Legendary</option>
+                    <option value="Exotic">Exotic</option>
+                    <option value="Epic">Epic</option>
+                    <option value="Rare">Rare</option>
+                    <option value="Uncommon">Uncommon</option>
+                    <option value="Common">Common</option>
+                </select>
+            </div>
+        </div>
+
         <div class="gallery" id="gallery"></div>
     </div>
 
     <script>
-        // NFT data
+        // NFT data - complete collection
         const nfts = [
             { id: "AlchemyBow", title: "AlchemyBow", subtitle: "Magical Transformation of Light Into Gold", rarity: "Exotic", printifyUrl: "https://ordinalrainbows.printify.me/product/26270333/alchemybow-magical-transformation-of-light-into-gold" },
             { id: "AuroraBow#1", title: "AuroraBow #1", subtitle: "First Whisper of the Polar Veil", rarity: "Common", printifyUrl: "https://ordinalrainbows.printify.me/product/26270391/aurorabow-1-first-whisper-of-the-polar-veil" },
@@ -558,7 +912,7 @@ h1 {
             { id: "GhostyBow#4", title: "GhostyBow #4", subtitle: "Haunting at the Edge of Night", rarity: "Uncommon", printifyUrl: "https://ordinalrainbows.printify.me/product/26312329/ghostybow-4-haunting-at-the-edge-of-night" },
             { id: "HazeBow#1", title: "HazeBow #1", subtitle: "Lost in Soft Rainbow Phases", rarity: "Common", printifyUrl: "https://ordinalrainbows.printify.me/product/26312342/hazebow-1-lost-in-soft-rainbow-phases" },
             { id: "HazeBow#2", title: "HazeBow #2", subtitle: "Between Reality and Dreams", rarity: "Common", printifyUrl: "https://ordinalrainbows.printify.me/product/26313072/hazebow-2-between-reality-and-dreams" },
-            { id: "HazeBow#3", title: "HazeBow#3", subtitle: "When First You Open Your Eyes", rarity: "Common", printifyUrl: "https://ordinalrainbows.printify.me/product/26313088/hazebow-3-when-first-you-open-your-eyes" },
+            { id: "HazeBow#3", title: "HazeBow #3", subtitle: "When First You Open Your Eyes", rarity: "Common", printifyUrl: "https://ordinalrainbows.printify.me/product/26313088/hazebow-3-when-first-you-open-your-eyes" },
             { id: "HeartBow", title: "HeartBow", subtitle: "Love In the Palm of Your Hand", rarity: "Legendary", printifyUrl: "https://ordinalrainbows.printify.me/product/26312781/heartbow-love-in-the-palm-of-your-hand" },
             { id: "HummingBow#1", title: "HummingBow #1", subtitle: "Hovering Prism Heartbeat", rarity: "Common", printifyUrl: "https://ordinalrainbows.printify.me/product/26312802/hummingbow-1-hovering-prism-heartbeat" },
             { id: "HummingBow#2", title: "HummingBow #2", subtitle: "How Rapid is Rapid?", rarity: "Common", printifyUrl: "https://ordinalrainbows.printify.me/product/26312814/hummingbow-2-how-rapid-is-rapid" },
@@ -587,36 +941,48 @@ h1 {
         ];
 
         const gallery = document.getElementById('gallery');
+        const individualCardView = document.getElementById('individualCardView');
+        const individualCard = document.getElementById('individualCard');
+        const backToGallery = document.getElementById('backToGallery');
+        const mainContainer = document.getElementById('mainContainer');
 
-        // ⚡ PERFORMANCE OPTIMIZATION: Intersection Observer for lazy liquid glass activation
+        // RARITY ORDER FOR SORTING
+        const rarityOrder = {
+            Legendary: 6,
+            Exotic: 5,
+            Epic: 4,
+            Rare: 3,
+            Uncommon: 2,
+            Common: 1
+        };
+
+        // LIQUID GLASS INTERSECTION OBSERVER
         const liquidGlassObserver = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
-                    // Activate liquid glass effect when card enters viewport
                     entry.target.classList.add('glass-active');
-                    // Optional: Unobserve after activation to save resources
-                    // liquidGlassObserver.unobserve(entry.target);
                 }
             });
         }, {
-            rootMargin: '50px', // Start activating 50px before card enters viewport
-            threshold: 0.1 // Trigger when 10% of card is visible
+            rootMargin: '50px',
+            threshold: 0.1
         });
 
-        // Generate NFT cards
-        nfts.forEach(nft => {
-            const card = document.createElement('div');
-            card.className = 'nft-card';
-
+        // CREATE CARD HTML
+        function createCardHTML(nft) {
             const rarityClass = nft.rarity.toLowerCase();
             const hasUrl = nft.printifyUrl && nft.printifyUrl !== null;
 
-            card.innerHTML = `
+            return `
                 <div class="nft-header">
                     <div class="nft-title">${nft.title}</div>
                     <div class="nft-subtitle">${nft.subtitle}</div>
                 </div>
-                <img src="images/${encodeURIComponent(nft.id)}.JPG" alt="${nft.title}" class="nft-image" loading="lazy" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22400%22 height=%22400%22%3E%3Crect fill=%22%23333%22 width=%22400%22 height=%22400%22/%3E%3Ctext fill=%22%23fff%22 font-size=%2220%22 x=%2250%25%22 y=%2250%25%22 text-anchor=%22middle%22 dominant-baseline=%22middle%22%3EImage Loading...%3C/text%3E%3C/svg%3E">
+                <img src="images/${encodeURIComponent(nft.id)}.JPG"
+                     alt="${nft.title}"
+                     class="nft-image"
+                     loading="lazy"
+                     onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22400%22 height=%22400%22%3E%3Crect fill=%22%23333%22 width=%22400%22 height=%22400%22/%3E%3Ctext fill=%22%23fff%22 font-size=%2220%22 x=%2250%25%22 y=%2250%25%22 text-anchor=%22middle%22 dominant-baseline=%22middle%22%3EImage Loading...%3C/text%3E%3C/svg%3E'">
                 <div class="nft-info">
                     <div class="info-row">
                         <span class="info-label">Rarity:</span>
@@ -628,38 +994,114 @@ h1 {
                     </div>
                     <div class="info-row">
                         <span class="info-label">Inscription ID:</span>
-                        <span class="info-value" style="font-size: 0.85em; word-break: break-all;">Coming Soon</span>
+                        <span class="info-value" style="font-size:0.85em;word-break:break-all;">Coming Soon</span>
                     </div>
-                    ${hasUrl ? 
+                    ${hasUrl ?
                         `<a href="#" class="sale-link" onclick="openPrintifyStore('${nft.printifyUrl}'); return false;">Order Prints</a>` :
                         `<div class="sale-link unavailable">Coming Soon</div>`
                     }
                 </div>
             `;
+        }
 
-            gallery.appendChild(card);
+        // SHOW INDIVIDUAL CARD
+        function showIndividualCard(nftId) {
+            const nft = nfts.find(n => n.id === nftId);
+            if (!nft) return;
 
-            // Observe card for lazy liquid glass activation
-            liquidGlassObserver.observe(card);
-        });
+            individualCard.innerHTML = createCardHTML(nft);
+            individualCard.dataset.id = nft.id;
+            
+            mainContainer.style.display = 'none';
+            individualCardView.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
 
-        // Activate header liquid glass immediately
+        // HIDE INDIVIDUAL CARD
+        function hideIndividualCard() {
+            individualCardView.classList.remove('active');
+            mainContainer.style.display = 'block';
+            document.body.style.overflow = '';
+        }
+
+        // RENDER GALLERY WITH SEARCH / FILTER / SORT
+        function renderGallery() {
+            const searchTerm = (document.getElementById('searchInput')?.value || '').toLowerCase();
+            const sortValue = document.getElementById('sortSelect')?.value || 'alpha';
+            const rarityFilter = document.getElementById('rarityFilter')?.value || 'all';
+
+            // filter
+            let filtered = nfts.filter(n => {
+                const matchesSearch =
+                    n.title.toLowerCase().includes(searchTerm) ||
+                    n.subtitle.toLowerCase().includes(searchTerm) ||
+                    n.rarity.toLowerCase().includes(searchTerm);
+
+                const matchesRarity =
+                    rarityFilter === 'all' || n.rarity === rarityFilter;
+
+                return matchesSearch && matchesRarity;
+            });
+
+            // sort
+            filtered.sort((a, b) => {
+                if (sortValue === 'alpha') {
+                    return a.title.localeCompare(b.title);
+                }
+                if (sortValue === 'rarity-high') {
+                    return (rarityOrder[b.rarity] || 0) - (rarityOrder[a.rarity] || 0);
+                }
+                if (sortValue === 'rarity-low') {
+                    return (rarityOrder[a.rarity] || 0) - (rarityOrder[b.rarity] || 0);
+                }
+                return 0;
+            });
+
+            // clear and render
+            gallery.innerHTML = '';
+            filtered.forEach(nft => {
+                const card = document.createElement('div');
+                card.className = 'nft-card';
+                card.dataset.id = nft.id;
+                card.innerHTML = createCardHTML(nft);
+
+                // Add click handler to image
+                const img = card.querySelector('.nft-image');
+                img.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    showIndividualCard(nft.id);
+                });
+
+                gallery.appendChild(card);
+                liquidGlassObserver.observe(card);
+            });
+        }
+
+        // initial render
+        renderGallery();
+
+        // activate header glass
         document.getElementById('main-header').classList.add('glass-active');
 
-        // Start background animation after page load
+        // background animation
         window.addEventListener('load', () => {
-            setTimeout(() => {
-                document.body.classList.add('loaded');
-            }, 100);
+            setTimeout(() => document.body.classList.add('loaded'), 100);
         });
 
-        // Open Printify store in modal
+        // search / filter / sort handlers
+        document.getElementById('searchInput').addEventListener('input', renderGallery);
+        document.getElementById('sortSelect').addEventListener('change', renderGallery);
+        document.getElementById('rarityFilter').addEventListener('change', renderGallery);
+
+        // back to gallery button
+        backToGallery.addEventListener('click', hideIndividualCard);
+
+        // PRINTIFY MODAL
         function openPrintifyStore(printifyUrl) {
             if (!printifyUrl) {
                 alert('Product not yet available');
                 return;
             }
-
             const modal = document.createElement('div');
             modal.className = 'printify-modal';
 
@@ -667,37 +1109,98 @@ h1 {
             const title = nft ? nft.title : 'Product';
 
             modal.innerHTML = `
-              <div class="printify-modal-content">
-                <div class="printify-modal-header">
-                  <h2>${title}</h2>
-                  <span class="printify-modal-close">&times;</span>
+                <div class="printify-modal-content">
+                    <div class="printify-modal-header">
+                        <h2>${title}</h2>
+                        <span class="printify-modal-close">&times;</span>
+                    </div>
+                    <iframe src="${printifyUrl}" class="printify-iframe"></iframe>
                 </div>
-                <iframe src="${printifyUrl}" class="printify-iframe"></iframe>
-              </div>
             `;
 
             document.body.appendChild(modal);
-            document.body.style.overflow = 'hidden';
 
             const closeBtn = modal.querySelector('.printify-modal-close');
             closeBtn.onclick = () => closePrintifyModal(modal);
-
-            modal.onclick = (e) => {
-              if (e.target === modal) closePrintifyModal(modal);
-            };
+            modal.onclick = (e) => { if (e.target === modal) closePrintifyModal(modal); };
 
             document.addEventListener('keydown', function escHandler(e) {
-              if (e.key === 'Escape') {
-                closePrintifyModal(modal);
-                document.removeEventListener('keydown', escHandler);
-              }
+                if (e.key === 'Escape') {
+                    closePrintifyModal(modal);
+                    document.removeEventListener('keydown', escHandler);
+                }
             });
         }
 
         function closePrintifyModal(modal) {
             modal.remove();
-            document.body.style.overflow = '';
         }
+
+        window.openPrintifyStore = openPrintifyStore;
+
+        // CAROUSEL LOGIC
+        const carouselOverlay = document.getElementById('carouselOverlay');
+        const carouselImage = document.getElementById('carouselImage');
+        const carouselTitle = document.getElementById('carouselTitle');
+        const carouselSubtitle = document.getElementById('carouselSubtitle');
+        const carouselPrev = document.getElementById('carouselPrev');
+        const carouselNext = document.getElementById('carouselNext');
+        const carouselSkip = document.getElementById('carouselSkip');
+
+        let currentSlideIndex = 0;
+
+        function showSlide(index) {
+            if (!nfts.length) return;
+            currentSlideIndex = (index + nfts.length) % nfts.length;
+            const nft = nfts[currentSlideIndex];
+            carouselImage.src = `images/${encodeURIComponent(nft.id)}.JPG`;
+            carouselTitle.textContent = nft.title;
+            carouselSubtitle.textContent = nft.subtitle;
+        }
+
+        // init carousel
+        showSlide(0);
+
+        // autoplay every 4 seconds
+        let carouselTimer = setInterval(() => {
+            showSlide(currentSlideIndex + 1);
+        }, 4000);
+
+        carouselPrev.addEventListener('click', () => {
+            showSlide(currentSlideIndex - 1);
+            resetCarouselTimer();
+        });
+
+        carouselNext.addEventListener('click', () => {
+            showSlide(currentSlideIndex + 1);
+            resetCarouselTimer();
+        });
+
+        carouselSkip.addEventListener('click', hideCarousel);
+
+        // Clicking carousel image shows individual card
+        carouselImage.addEventListener('click', () => {
+            const nft = nfts[currentSlideIndex];
+            hideCarousel();
+            showIndividualCard(nft.id);
+        });
+
+        function hideCarousel() {
+            carouselOverlay.classList.add('hidden');
+            clearInterval(carouselTimer);
+        }
+
+        function resetCarouselTimer() {
+            clearInterval(carouselTimer);
+            carouselTimer = setInterval(() => {
+                showSlide(currentSlideIndex + 1);
+            }, 4000);
+        }
+
+        // WALLET BUTTON PLACEHOLDER
+        document.getElementById('connectWallet').addEventListener('click', () => {
+            alert('Wallet integration coming soon.\n\nThis will connect your Yours/BSV wallet and unlock the card backs where you can see your MNEE rewards!');
+        });
     </script>
 </body>
 </html>
