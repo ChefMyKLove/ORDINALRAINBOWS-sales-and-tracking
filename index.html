@@ -735,8 +735,56 @@ h1 {
 
 /* Mobile optimizations */
 @media (max-width: 768px) {
+    /* Disable resource-intensive animations */
+    body::before,
+    .carousel-overlay::before,
+    .individual-card-view::before {
+        animation: none !important;
+        background-image: url('images/AlchemyBow.JPG') !important;
+        filter: brightness(0.6) saturate(1.2);
+    }
+
+    /* Static rainbow gradient for text instead of animated backgrounds */
+    h1,
+    .subtitle,
+    .nft-title,
+    .sale-link:not(.unavailable) {
+        animation: none !important;
+        background: linear-gradient(135deg, #ff006e, #ff4d00, #ffb700, #00f5d4, #00bbf9, #5e60ce, #7209b7) !important;
+        -webkit-background-clip: text !important;
+        background-clip: text !important;
+        -webkit-text-fill-color: transparent !important;
+    }
+
+    /* Reduce blur intensity */
+    :root {
+        --blur-primary: 8px;
+        --refraction-scale: 20;
+        --edge-glow-size: 80px;
+        --edge-glow-opacity: 0.5;
+    }
+
+    /* Simplify glass effects */
+    header.glass-active,
+    .nft-card.glass-active {
+        backdrop-filter: blur(8px) saturate(150%);
+        -webkit-backdrop-filter: blur(8px) saturate(150%);
+    }
+
+    /* Reduce shadow complexity */
+    .nft-card,
+    header {
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+    }
+
+    .carousel-image {
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+    }
+
+    /* Layout adjustments */
     .gallery {
         grid-template-columns: 1fr;
+        gap: 30px;
     }
 
     header {
@@ -749,12 +797,6 @@ h1 {
 
     .controls-grid {
         grid-template-columns: 1fr;
-    }
-
-    :root {
-        --blur-primary: 16px;
-        --refraction-scale: 30;
-        --edge-glow-size: 100px;
     }
 
     .carousel-nav {
@@ -771,6 +813,17 @@ h1 {
 
     .carousel-info {
         padding: 0 20px;
+    }
+
+    /* Reduce text stroke effects */
+    h1 {
+        -webkit-text-stroke: 0px;
+        text-shadow: 0 0 3px rgba(255, 255, 255, 0.2);
+    }
+
+    .subtitle {
+        -webkit-text-stroke: 0px;
+        text-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
     }
 }
 
@@ -956,17 +1009,21 @@ h1 {
             Common: 1
         };
 
-        // LIQUID GLASS INTERSECTION OBSERVER
-        const liquidGlassObserver = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('glass-active');
-                }
-            });
-        }, {
-            rootMargin: '50px',
-            threshold: 0.1
-        });
+       
+       // Detect mobile
+const isMobile = window.innerWidth <= 768 || /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+
+// LIQUID GLASS INTERSECTION OBSERVER (simplified for mobile)
+const liquidGlassObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            entry.target.classList.add('glass-active');
+        }
+    });
+}, {
+    rootMargin: isMobile ? '100px' : '50px',
+    threshold: isMobile ? 0.01 : 0.1
+});
 
         // CREATE CARD HTML
         function createCardHTML(nft) {
@@ -1162,9 +1219,11 @@ h1 {
         showSlide(0);
 
         // autoplay every 4 seconds
-        let carouselTimer = setInterval(() => {
-            showSlide(currentSlideIndex + 1);
-        }, 4000);
+       // autoplay every 4 seconds (6 seconds on mobile to reduce load)
+const carouselInterval = isMobile ? 6000 : 4000;
+let carouselTimer = setInterval(() => {
+    showSlide(currentSlideIndex + 1);
+}, carouselInterval);
 
         carouselPrev.addEventListener('click', () => {
             showSlide(currentSlideIndex - 1);
@@ -1191,11 +1250,11 @@ h1 {
         }
 
         function resetCarouselTimer() {
-            clearInterval(carouselTimer);
-            carouselTimer = setInterval(() => {
-                showSlide(currentSlideIndex + 1);
-            }, 4000);
-        }
+    clearInterval(carouselTimer);
+    carouselTimer = setInterval(() => {
+        showSlide(currentSlideIndex + 1);
+    }, carouselInterval);
+}
 
         // WALLET BUTTON PLACEHOLDER
         document.getElementById('connectWallet').addEventListener('click', () => {
